@@ -1,0 +1,11 @@
+﻿@page
+@model Web.Pages.SignUpModel
+<h2>Sign up</h2>
+<p class="text-danger">@Model.Message</p>
+<form method="post">
+    <input asp-for="FullName" class="form-control mb-2" placeholder="Full name" />
+    <input asp-for="Email" class="form-control mb-2" placeholder="Email" />
+    <input asp-for="Phone" class="form-control mb-2" placeholder="Phone" />
+    <input asp-for="Password" type="password" class="form-control mb-2" placeholder="Password" />
+    <button class="btn btn-primary">Create account</button>
+</form>

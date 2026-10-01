@@ -1,0 +1,20 @@
+﻿@page
+@model Web.Pages.LoginModel
+<h2>Login</h2>
+<p class="text-danger">@Model.Message</p>
+
+<form method="post" asp-page-handler="Customer">
+    <input asp-for="Email" class="form-control" placeholder="Email" />
+    <input asp-for="Password" type="password" class="form-control mt-2" placeholder="Password" />
+    <button class="btn btn-primary mt-2">Login</button>
+</form>
+
+<hr />
+
+<form method="post" asp-page-handler="Admin">
+    <input asp-for="AdminPassword" type="password" class="form-control" placeholder="Admin password" />
+    <button class="btn btn-dark mt-2">Login as admin</button>
+</form>
+
+<hr />
+<a asp-page="SignUp">New customer? Sign up</a>

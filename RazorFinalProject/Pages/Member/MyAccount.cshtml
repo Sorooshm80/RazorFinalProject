@@ -1,0 +1,32 @@
+﻿@page
+@model Web.Pages.Member.MyAccountModel
+<h2>My account @(Model.IsVip ? "⭐ VIP" : "")</h2>
+<p class="text-info">@Model.Message</p>
+
+<h4>Buy a package</h4>
+<form method="post">
+    @foreach (var p in Model.Plans)
+    {
+        <button class="btn btn-primary me-2" asp-page-handler="Buy" asp-route-planId="@p.Id">
+            @p.Name: @p.Sessions sessions, @p.ValidDays days, @p.Price
+        </button>
+    }
+</form>
+
+<h4 class="mt-4">My packages</h4>
+<table class="table">
+    <tr><th>Bought</th><th>Expires</th><th>Remaining</th></tr>
+    @foreach (var p in Model.MyPackages)
+    {
+        <tr><td>@p.PurchaseDate.ToString("yyyy-MM-dd")</td><td>@p.ExpiryDate.ToString("yyyy-MM-dd")</td><td>@p.RemainingSessions / @p.TotalSessions</td></tr>
+    }
+</table>
+
+<h4>My reservations</h4>
+<table class="table">
+    <tr><th>Date</th><th>Pool</th><th>Session</th><th>Status</th></tr>
+    @foreach (var b in Model.MyBookings)
+    {
+        <tr><td>@b.SessionDate.ToString("yyyy-MM-dd")</td><td>@b.Session.Pool.Name</td><td>@b.Session.Description</td><td>@b.Status</td></tr>
+    }
+</table>

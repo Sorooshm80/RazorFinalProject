@@ -1,0 +1,12 @@
+﻿@page
+@model Web.Pages.Admin.EditCustomerModel
+<h2>Edit customer</h2>
+<p class="text-danger">@Model.Message</p>
+<form method="post">
+    <input type="hidden" asp-for="Id" />
+    <input asp-for="FullName" class="form-control mb-2" />
+    <input asp-for="Email" class="form-control mb-2" />
+    <input asp-for="Phone" class="form-control mb-2" />
+    <label><input asp-for="IsVip" /> VIP</label><br />
+    <button class="btn btn-primary mt-2">Save</button>
+</form>

@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Business/Business.csproj" />
+  <Project Path="DataAccess/DataAccess.csproj" />
+  <Project Path="RazorFinalProject/Web.csproj" />
+</Solution>

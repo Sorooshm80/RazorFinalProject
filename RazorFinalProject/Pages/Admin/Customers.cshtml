@@ -1,0 +1,15 @@
+﻿@page
+@model Web.Pages.Admin.CustomersModel
+<h2>Customers</h2>
+<a asp-page="Reports">Go to reports</a>
+<p class="text-info">@Model.Message</p>
+<table class="table">
+    <tr><th>Id</th><th>Name</th><th>Email</th><th>Phone</th><th>VIP</th><th></th></tr>
+    @foreach (var c in Model.Customers)
+    {
+        <tr>
+            <td>@c.Id</td><td>@c.FullName</td><td>@c.Email</td><td>@c.Phone</td><td>@c.IsVip</td>
+            <td><a asp-page="EditCustomer" asp-route-id="@c.Id">Edit</a></td>
+        </tr>
+    }
+</table>

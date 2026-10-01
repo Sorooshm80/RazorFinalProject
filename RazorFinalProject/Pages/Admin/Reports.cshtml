@@ -1,0 +1,64 @@
+﻿@page
+@model Web.Pages.Admin.ReportsModel
+<h2>Reports</h2>
+
+<h4>1. Customer visits</h4>
+<form method="post" asp-page-handler="Visits">
+    <input asp-for="CustomerId1" placeholder="Customer id" />
+    <input asp-for="Days1" placeholder="Days" />
+    <button class="btn btn-primary">Show</button>
+</form>
+@if (Model.Report1 != null)
+{
+    <table class="table">
+        <tr><th>Date</th><th>Pool</th><th>Session</th></tr>
+        @foreach (var r in Model.Report1)
+        {
+            <tr><td>@r.VisitDate</td><td>@r.PoolName</td><td>@r.SessionText</td></tr>
+        }
+    </table>
+}
+
+<h4 class="mt-4">2. Top pools</h4>
+<form method="post" asp-page-handler="TopPools">
+    <input asp-for="Days2" placeholder="Days" />
+    <input asp-for="TopCount" placeholder="Top how many?" />
+    <button class="btn btn-primary">Show</button>
+</form>
+@if (Model.Report2 != null)
+{
+    <table class="table">
+        <tr><th>Pool</th><th>Visits</th></tr>
+        @foreach (var r in Model.Report2)
+        {
+            <tr><td>@r.PoolName</td><td>@r.VisitCount</td></tr>
+        }
+    </table>
+}
+
+<h4 class="mt-4">3. Busiest pool on a date</h4>
+<form method="post" asp-page-handler="Busiest">
+    <input asp-for="Date3" type="date" />
+    <button class="btn btn-primary">Show</button>
+</form>
+@if (Model.Report3Done)
+{
+    @if (Model.Report3 == null) { <p>No visits on this date.</p> }
+    else { <p>@Model.Report3.PoolName (@Model.Report3.VisitCount visits)</p> }
+}
+
+<h4 class="mt-4">4. Reserved but did not attend</h4>
+<form method="post" asp-page-handler="Missed">
+    <input asp-for="Days4" placeholder="Days" />
+    <button class="btn btn-primary">Show</button>
+</form>
+@if (Model.Report4 != null)
+{
+    <table class="table">
+        <tr><th>Customer</th><th>Pool</th><th>Date</th><th>Session</th></tr>
+        @foreach (var r in Model.Report4)
+        {
+            <tr><td>@r.CustomerName</td><td>@r.PoolName</td><td>@r.Date.ToString("yyyy-MM-dd")</td><td>@r.SessionText</td></tr>
+        }
+    </table>
+}
