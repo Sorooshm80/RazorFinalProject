@@ -15,11 +15,11 @@ namespace Web.Pages.Admin
         }
 
         [BindProperty] public int CustomerId1 { get; set; }
-        [BindProperty] public int Days1 { get; set; }
-        [BindProperty] public int Days2 { get; set; }
-        [BindProperty] public int TopCount { get; set; }
-        [BindProperty] public DateTime Date3 { get; set; }
-        [BindProperty] public int Days4 { get; set; }
+        [BindProperty] public int Days1 { get; set; } = 7;
+        [BindProperty] public int Days2 { get; set; } = 7;
+        [BindProperty] public int TopCount { get; set; } = 3;
+        [BindProperty] public DateTime Date3 { get; set; } = DateTime.Today;
+        [BindProperty] public int Days4 { get; set; } = 7;
 
         public List<VisitReportItem> Report1 { get; set; }
         public List<PoolCountItem> Report2 { get; set; }
@@ -30,7 +30,6 @@ namespace Web.Pages.Admin
         public IActionResult OnGet()
         {
             if (!IsAdmin) return RedirectToPage("/Login");
-            Date3 = DateTime.Today;
             return Page();
         }
 

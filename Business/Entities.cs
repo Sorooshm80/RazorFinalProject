@@ -2,13 +2,19 @@
 {
     public enum SessionType { Fixed, FreeTime }
     public enum PaymentMethod { Package, PayPerEntry }
-    public enum BookingStatus { Reserved, Attended }
+    public enum BookingStatus { Reserved, Attended, Cancelled }
+    public enum SessionState { Available, Reserved, Entered }
 
     public abstract class BaseEntity
     {
         public int Id { get; set; }
     }
 
+    public class SessionRow
+    {
+        public PoolSession Session { get; set; }
+        public SessionState State { get; set; }
+    }
     public class Pool : BaseEntity
     {
         public string Name { get; set; }
@@ -16,9 +22,6 @@
         public List<PoolSession> Sessions { get; set; } = new List<PoolSession>();
     }
 
-    // One row = one session of one pool on one weekday.
-    // Fixed pool: several 2h rows. Free-time pool: one long row.
-    // Mixed day: fixed rows + one free-time row.
     public class PoolSession : BaseEntity
     {
         public int PoolId { get; set; }
@@ -45,14 +48,22 @@
     {
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
-        public int TotalSessions { get; set; }
-        public int UsedSessions { get; set; }
+
+        public int FixedTotal { get; set; }
+        public int FixedUsed { get; set; }
+        public int FreeTimeTotal { get; set; }
+        public int FreeTimeUsed { get; set; }
+
         public DateTime PurchaseDate { get; set; }
         public DateTime ExpiryDate { get; set; }
         public decimal Price { get; set; }
 
-        public int RemainingSessions => TotalSessions - UsedSessions;
+        public int FixedRemaining => FixedTotal - FixedUsed;
+        public int FreeTimeRemaining => FreeTimeTotal - FreeTimeUsed;
+        public bool IsExpired => ExpiryDate.Date < DateTime.Today;
+        public int DaysRemaining => IsExpired ? 0 : (ExpiryDate.Date - DateTime.Today).Days;
     }
+
 
     public class Booking : BaseEntity
     {
@@ -64,6 +75,7 @@
         public BookingStatus Status { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public decimal AmountPaid { get; set; }
+        public int? SessionPackageId { get; set; }    
     }
 
     public class Visit : BaseEntity

@@ -12,14 +12,17 @@ namespace DataAccess.Repos
     {
         public SessionPackageRepository(AppDbContext context) : base(context) { }
 
-        public SessionPackage GetActivePackage(int customerId, DateTime today)
+        public SessionPackage GetActivePackage(int customerId, DateTime date, SessionType type)
         {
-            return _context.SessionPackages
-                .Where(p => p.CustomerId == customerId
-                         && p.ExpiryDate >= today
-                         && p.UsedSessions < p.TotalSessions)
-                .OrderBy(p => p.ExpiryDate)      // use the one expiring first
-                .FirstOrDefault();
+            var query = _context.SessionPackages
+                .Where(p => p.CustomerId == customerId && p.ExpiryDate >= date);
+
+            if (type == SessionType.Fixed)
+                query = query.Where(p => p.FixedUsed < p.FixedTotal);
+            else
+                query = query.Where(p => p.FreeTimeUsed < p.FreeTimeTotal);
+
+            return query.OrderBy(p => p.ExpiryDate).FirstOrDefault();   // package expiring first is used first
         }
 
         public List<SessionPackage> GetByCustomer(int customerId)

@@ -25,9 +25,9 @@ namespace Business.Services
         {
             return new List<PackagePlan>
         {
-            new PackagePlan { Id = 1, Name = "Starter", Sessions = 5,  ValidDays = 30,  Price = 40 },
-            new PackagePlan { Id = 2, Name = "Standard", Sessions = 10, ValidDays = 60,  Price = 70 },
-            new PackagePlan { Id = 3, Name = "Premium", Sessions = 20, ValidDays = 120, Price = 120 }
+            new PackagePlan { Id = 1, Name = "Starter",  FixedSessions = 5,  FreeTimeSessions = 0,  ValidDays = 30,  Price = 40 },
+            new PackagePlan { Id = 2, Name = "Standard", FixedSessions = 8,  FreeTimeSessions = 4,  ValidDays = 60,  Price = 90 },
+            new PackagePlan { Id = 3, Name = "Premium",  FixedSessions = 10, FreeTimeSessions = 10, ValidDays = 120, Price = 150 }
         };
         }
 

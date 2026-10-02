@@ -15,8 +15,10 @@ namespace DataAccess.Repos
 
         public Booking Find(int customerId, int sessionId, DateTime date)
         {
-            return _context.Bookings.FirstOrDefault(b =>
-                b.CustomerId == customerId && b.SessionId == sessionId && b.SessionDate == date);
+            return _context.Bookings
+                .Where(b => b.CustomerId == customerId && b.SessionId == sessionId && b.SessionDate == date.Date)
+                .OrderByDescending(b => b.Id)
+                .FirstOrDefault();
         }
 
         public List<Booking> GetByCustomer(int customerId)
@@ -25,6 +27,13 @@ namespace DataAccess.Repos
                 .Include(b => b.Session).ThenInclude(s => s.Pool)
                 .Where(b => b.CustomerId == customerId)
                 .OrderByDescending(b => b.SessionDate)
+                .ToList();
+        }
+
+        public List<Booking> GetByCustomerAndDate(int customerId, DateTime date)
+        {
+            return _context.Bookings
+                .Where(b => b.CustomerId == customerId && b.SessionDate == date.Date)
                 .ToList();
         }
     }

@@ -2,6 +2,7 @@ using Business;
 using Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Web.Pages.Member
 {
@@ -18,8 +19,8 @@ namespace Web.Pages.Member
             _entries = entries;
         }
 
-        public List<Pool> AllPools { get; set; }
-        public List<PoolSession> Sessions { get; set; }
+        public SelectList PoolOptions { get; set; }
+        public List<SessionRow> Rows { get; set; } = new List<SessionRow>();
 
         [BindProperty(SupportsGet = true)] public int PoolId { get; set; }
         [BindProperty(SupportsGet = true)] public DateTime Date { get; set; }
@@ -34,25 +35,36 @@ namespace Web.Pages.Member
         public IActionResult OnPostReserve(int sessionId)
         {
             if (CustomerId == null) return RedirectToPage("/Login");
-            var result = _reservations.Reserve(CustomerId.Value, sessionId, Date);
-            Message = result.Message;
-            return RedirectToPage(new { PoolId, Date = Date.ToString("yyyy-MM-dd") });
+            Message = _reservations.Reserve(CustomerId.Value, sessionId, Date).Message;
+            return Back();
+        }
+
+        public IActionResult OnPostCancel(int sessionId)
+        {
+            if (CustomerId == null) return RedirectToPage("/Login");
+            Message = _reservations.Cancel(CustomerId.Value, sessionId, Date).Message;
+            return Back();
         }
 
         public IActionResult OnPostEnter(int sessionId)
         {
             if (CustomerId == null) return RedirectToPage("/Login");
-            var result = _entries.Enter(CustomerId.Value, sessionId);
-            Message = result.Message;
+            Message = _entries.Enter(CustomerId.Value, sessionId).Message;
+            return Back();
+        }
+
+        private IActionResult Back()
+        {
             return RedirectToPage(new { PoolId, Date = Date.ToString("yyyy-MM-dd") });
         }
 
         private void LoadData()
         {
-            AllPools = _pools.GetPools();
+            var allPools = _pools.GetPools();
+            PoolOptions = new SelectList(allPools, "Id", "Name");
             if (Date == default) Date = DateTime.Today;
-            if (PoolId == 0 && AllPools.Count > 0) PoolId = AllPools[0].Id;
-            Sessions = _pools.GetSessions(PoolId, Date);
+            if (PoolId == 0 && allPools.Count > 0) PoolId = allPools[0].Id;
+            Rows = _pools.GetSessionRows(PoolId, Date, CustomerId.Value);
         }
     }
 }

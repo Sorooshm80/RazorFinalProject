@@ -18,13 +18,25 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    @{
+                        var isCustomer = Context.Session.GetInt32("CustomerId") != null;
+                        var isAdmin = Context.Session.GetString("Role") == "Admin";
+                    }
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
+                        @if (isCustomer)
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Member/Pools">Pools</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Member/MyAccount">My account &amp; packages</a></li>
+                        }
+                        @if (isAdmin)
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Admin/Customers">Customers</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Admin/Reports">Reports</a></li>
+                        }
+                        @if (isCustomer || isAdmin)
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Logout">Logout</a></li>
+                        }
                     </ul>
                 </div>
             </div>

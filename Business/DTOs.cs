@@ -18,13 +18,15 @@ namespace Business
     {
         public PaymentMethod Method { get; set; }
         public decimal Amount { get; set; }
+        public int? PackageId { get; set; }
     }
 
     public class PackagePlan
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Sessions { get; set; }
+        public int FixedSessions { get; set; }
+        public int FreeTimeSessions { get; set; }
         public int ValidDays { get; set; }
         public decimal Price { get; set; }
     }

@@ -9,6 +9,6 @@ namespace Business.Interfaces
     public interface IPoolService
     {
         List<Pool> GetPools();
-        List<PoolSession> GetSessions(int poolId, DateTime date);
+        List<SessionRow> GetSessionRows(int poolId, DateTime date, int customerId);
     }
 }

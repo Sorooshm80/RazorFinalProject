@@ -9,6 +9,7 @@ namespace Business.Interfaces
     public interface IReservationService
     {
         OperationResult Reserve(int customerId, int sessionId, DateTime date);
+        OperationResult Cancel(int customerId, int sessionId, DateTime date);
         List<Booking> GetBookings(int customerId);
     }
 }

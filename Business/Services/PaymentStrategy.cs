@@ -1,9 +1,9 @@
-﻿using Business.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Business.Interfaces;
 
 namespace Business.Services
 {
@@ -17,34 +17,38 @@ namespace Business.Services
             _packages = packages;
         }
 
-        public bool CanPay(Customer customer)
+        public bool CanPay(Customer customer, PoolSession session, DateTime date)
         {
-            return _packages.GetActivePackage(customer.Id, DateTime.Today) != null;
+            return _packages.GetActivePackage(customer.Id, date, session.Type) != null;
         }
 
-        public PaymentResult Pay(Customer customer, PoolSession session)
+        public PaymentResult Pay(Customer customer, PoolSession session, DateTime date)
         {
-            var package = _packages.GetActivePackage(customer.Id, DateTime.Today);
-            package.UsedSessions++;
+            var package = _packages.GetActivePackage(customer.Id, date, session.Type);
+
+            if (session.Type == SessionType.Fixed)
+                package.FixedUsed++;
+            else
+                package.FreeTimeUsed++;
+
             _packages.Update(package);
-            return new PaymentResult { Method = PaymentMethod.Package, Amount = 0 };
+            return new PaymentResult { Method = PaymentMethod.Package, Amount = 0, PackageId = package.Id };
         }
     }
 
-    // Normal customer pays the session price
     public class PayPerEntryStrategy : IPaymentStrategy
     {
-        public bool CanPay(Customer customer) => true;
+        public bool CanPay(Customer customer, PoolSession session, DateTime date) => true;
 
-        public PaymentResult Pay(Customer customer, PoolSession session)
+        public PaymentResult Pay(Customer customer, PoolSession session, DateTime date)
         {
-            return new PaymentResult { Method = PaymentMethod.PayPerEntry, Amount = session.Price };
+            return new PaymentResult { Method = PaymentMethod.PayPerEntry, Amount = session.Price, PackageId = null };
         }
     }
 
     public interface IPaymentService
     {
-        PaymentResult Charge(Customer customer, PoolSession session);
+        PaymentResult Charge(Customer customer, PoolSession session, DateTime date);
     }
 
     public class PaymentService : IPaymentService
@@ -56,12 +60,10 @@ namespace Business.Services
             _strategies = strategies;
         }
 
-        public PaymentResult Charge(Customer customer, PoolSession session)
+        public PaymentResult Charge(Customer customer, PoolSession session, DateTime date)
         {
-            // The first strategy that can pay wins.
-            // The registration order in Program.cs matters: package first.
-            var strategy = _strategies.First(s => s.CanPay(customer));
-            return strategy.Pay(customer, session);
+            var strategy = _strategies.First(s => s.CanPay(customer, session, date));
+            return strategy.Pay(customer, session, date);
         }
     }
 }

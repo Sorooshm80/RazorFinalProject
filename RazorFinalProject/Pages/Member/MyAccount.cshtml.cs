@@ -23,6 +23,8 @@ namespace Web.Pages.Member
         public List<PackagePlan> Plans { get; set; }
         public List<SessionPackage> MyPackages { get; set; }
         public List<Booking> MyBookings { get; set; }
+        public int ActiveFixed { get; set; }
+        public int ActiveFreeTime { get; set; }
 
         public IActionResult OnGet()
         {
@@ -34,8 +36,14 @@ namespace Web.Pages.Member
         public IActionResult OnPostBuy(int planId)
         {
             if (CustomerId == null) return RedirectToPage("/Login");
-            var result = _packages.Buy(CustomerId.Value, planId);
-            Message = result.Message;
+            Message = _packages.Buy(CustomerId.Value, planId).Message;
+            return RedirectToPage();
+        }
+
+        public IActionResult OnPostCancel(int sessionId, DateTime date)
+        {
+            if (CustomerId == null) return RedirectToPage("/Login");
+            Message = _reservations.Cancel(CustomerId.Value, sessionId, date).Message;
             return RedirectToPage();
         }
 
@@ -45,6 +53,9 @@ namespace Web.Pages.Member
             Plans = _packages.GetPlans();
             MyPackages = _packages.GetPackages(CustomerId.Value);
             MyBookings = _reservations.GetBookings(CustomerId.Value);
+
+            ActiveFixed = MyPackages.Where(p => !p.IsExpired).Sum(p => p.FixedRemaining);
+            ActiveFreeTime = MyPackages.Where(p => !p.IsExpired).Sum(p => p.FreeTimeRemaining);
         }
     }
 }

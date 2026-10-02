@@ -2,11 +2,17 @@
 @model Web.Pages.Admin.ReportsModel
 <h2>Reports</h2>
 
-<h4>1. Customer visits</h4>
-<form method="post" asp-page-handler="Visits">
-    <input asp-for="CustomerId1" placeholder="Customer id" />
-    <input asp-for="Days1" placeholder="Days" />
-    <button class="btn btn-primary">Show</button>
+<h4>1. Visits of one customer</h4>
+<form method="post" asp-page-handler="Visits" class="row g-2 align-items-end mb-3">
+    <div class="col-auto">
+        <label asp-for="CustomerId1" class="form-label">Customer ID</label>
+        <input asp-for="CustomerId1" type="number" min="1" class="form-control" />
+    </div>
+    <div class="col-auto">
+        <label asp-for="Days1" class="form-label">Number of past days</label>
+        <input asp-for="Days1" type="number" min="1" class="form-control" />
+    </div>
+    <div class="col-auto"><button class="btn btn-primary">Show visits</button></div>
 </form>
 @if (Model.Report1 != null)
 {
@@ -19,16 +25,23 @@
     </table>
 }
 
-<h4 class="mt-4">2. Top pools</h4>
-<form method="post" asp-page-handler="TopPools">
-    <input asp-for="Days2" placeholder="Days" />
-    <input asp-for="TopCount" placeholder="Top how many?" />
-    <button class="btn btn-primary">Show</button>
+<hr />
+<h4>2. Top pools by number of visitors</h4>
+<form method="post" asp-page-handler="TopPools" class="row g-2 align-items-end mb-3">
+    <div class="col-auto">
+        <label asp-for="Days2" class="form-label">Number of past days</label>
+        <input asp-for="Days2" type="number" min="1" class="form-control" />
+    </div>
+    <div class="col-auto">
+        <label asp-for="TopCount" class="form-label">How many pools to show (top N)</label>
+        <input asp-for="TopCount" type="number" min="1" class="form-control" />
+    </div>
+    <div class="col-auto"><button class="btn btn-primary">Show top pools</button></div>
 </form>
 @if (Model.Report2 != null)
 {
     <table class="table">
-        <tr><th>Pool</th><th>Visits</th></tr>
+        <tr><th>Pool</th><th>Visitors</th></tr>
         @foreach (var r in Model.Report2)
         {
             <tr><td>@r.PoolName</td><td>@r.VisitCount</td></tr>
@@ -36,21 +49,36 @@
     </table>
 }
 
-<h4 class="mt-4">3. Busiest pool on a date</h4>
-<form method="post" asp-page-handler="Busiest">
-    <input asp-for="Date3" type="date" />
-    <button class="btn btn-primary">Show</button>
+<hr />
+<h4>3. Busiest pool on a date</h4>
+<form method="post" asp-page-handler="Busiest" class="row g-2 align-items-end mb-3">
+    <div class="col-auto">
+        <label asp-for="Date3" class="form-label">Date</label>
+        <input asp-for="Date3" type="date" class="form-control" />
+    </div>
+    <div class="col-auto"><button class="btn btn-primary">Show busiest pool</button></div>
 </form>
 @if (Model.Report3Done)
 {
-    @if (Model.Report3 == null) { <p>No visits on this date.</p> }
-    else { <p>@Model.Report3.PoolName (@Model.Report3.VisitCount visits)</p> }
+    @if (Model.Report3 == null)
+    {
+        <p>No visits on this date.</p>
+    }
+    else
+    {
+
+        <p><strong>@Model.Report3.PoolName</strong> (@Model.Report3.VisitCount visitors)</p>
+    }
 }
 
-<h4 class="mt-4">4. Reserved but did not attend</h4>
-<form method="post" asp-page-handler="Missed">
-    <input asp-for="Days4" placeholder="Days" />
-    <button class="btn btn-primary">Show</button>
+<hr />
+<h4>4. Reserved sessions customers did not attend</h4>
+<form method="post" asp-page-handler="Missed" class="row g-2 align-items-end mb-3">
+    <div class="col-auto">
+        <label asp-for="Days4" class="form-label">Number of past days</label>
+        <input asp-for="Days4" type="number" min="1" class="form-control" />
+    </div>
+    <div class="col-auto"><button class="btn btn-primary">Show missed reservations</button></div>
 </form>
 @if (Model.Report4 != null)
 {

@@ -3,30 +3,92 @@
 <h2>My account @(Model.IsVip ? "⭐ VIP" : "")</h2>
 <p class="text-info">@Model.Message</p>
 
+<div class="alert alert-primary">
+    Sessions left in your active packages:
+    <strong>@Model.ActiveFixed fixed</strong> and
+    <strong>@Model.ActiveFreeTime free-time</strong>
+</div>
+
 <h4>Buy a package</h4>
-<form method="post">
+<div class="row">
     @foreach (var p in Model.Plans)
     {
-        <button class="btn btn-primary me-2" asp-page-handler="Buy" asp-route-planId="@p.Id">
-            @p.Name: @p.Sessions sessions, @p.ValidDays days, @p.Price
-        </button>
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@p.Name</h5>
+                    <p class="card-text">
+                        @p.FixedSessions fixed sessions<br />
+                        @p.FreeTimeSessions free-time sessions<br />
+                        Valid for @p.ValidDays days<br />
+                        <strong>Price: @p.Price</strong>
+                    </p>
+                    <form method="post">
+                        <button class="btn btn-primary" asp-page-handler="Buy" asp-route-planId="@p.Id">Buy</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     }
-</form>
+</div>
 
 <h4 class="mt-4">My packages</h4>
 <table class="table">
-    <tr><th>Bought</th><th>Expires</th><th>Remaining</th></tr>
+    <tr>
+        <th>Bought</th>
+        <th>Expires</th>
+        <th>Days left</th>
+        <th>Fixed sessions left</th>
+        <th>Free-time sessions left</th>
+        <th>Status</th>
+    </tr>
     @foreach (var p in Model.MyPackages)
     {
-        <tr><td>@p.PurchaseDate.ToString("yyyy-MM-dd")</td><td>@p.ExpiryDate.ToString("yyyy-MM-dd")</td><td>@p.RemainingSessions / @p.TotalSessions</td></tr>
+        <tr>
+            <td>@p.PurchaseDate.ToString("yyyy-MM-dd")</td>
+            <td>@p.ExpiryDate.ToString("yyyy-MM-dd")</td>
+            <td>@p.DaysRemaining</td>
+            <td>@p.FixedRemaining of @p.FixedTotal</td>
+            <td>@p.FreeTimeRemaining of @p.FreeTimeTotal</td>
+            <td>
+                @if (p.IsExpired)
+                {
+                    <span class="badge bg-danger">Expired</span>
+                }
+                else if (p.FixedRemaining == 0 && p.FreeTimeRemaining == 0)
+                {
+
+                    <span class="badge bg-secondary">Used up</span>
+                }
+                else
+                {
+
+                    <span class="badge bg-success">Active</span>
+                }
+            </td>
+        </tr>
     }
 </table>
 
 <h4>My reservations</h4>
 <table class="table">
-    <tr><th>Date</th><th>Pool</th><th>Session</th><th>Status</th></tr>
+    <tr><th>Date</th><th>Pool</th><th>Session</th><th>Status</th><th></th></tr>
     @foreach (var b in Model.MyBookings)
     {
-        <tr><td>@b.SessionDate.ToString("yyyy-MM-dd")</td><td>@b.Session.Pool.Name</td><td>@b.Session.Description</td><td>@b.Status</td></tr>
+        <tr>
+            <td>@b.SessionDate.ToString("yyyy-MM-dd")</td>
+            <td>@b.Session.Pool.Name</td>
+            <td>@b.Session.Description</td>
+            <td>@b.Status</td>
+            <td>
+                @if (b.Status == BookingStatus.Reserved && b.SessionDate >= DateTime.Today)
+                {
+                    <form method="post">
+                        <input type="hidden" name="date" value="@b.SessionDate.ToString("yyyy-MM-dd")" />
+                        <button class="btn btn-sm btn-outline-danger" asp-page-handler="Cancel" asp-route-sessionId="@b.SessionId">Cancel</button>
+                    </form>
+                }
+            </td>
+        </tr>
     }
 </table>

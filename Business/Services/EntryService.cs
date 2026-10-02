@@ -12,12 +12,12 @@ namespace Business.Services
         private readonly ICustomerRepository _customers;
         private readonly IPoolSessionRepository _sessions;
         private readonly IBookingRepository _bookings;
-        private readonly IRepository<Visit> _visits;
+        private readonly IVisitRepository _visits;
         private readonly IPaymentService _payments;
         private readonly ICommandInvoker _invoker;
 
         public EntryService(ICustomerRepository customers, IPoolSessionRepository sessions,
-                            IBookingRepository bookings, IRepository<Visit> visits,
+                            IBookingRepository bookings, IVisitRepository visits,
                             IPaymentService payments, ICommandInvoker invoker)
         {
             _customers = customers;

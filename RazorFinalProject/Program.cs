@@ -40,6 +40,7 @@ namespace Web
             builder.Services.AddScoped<IEntryService, EntryService>();
             builder.Services.AddScoped<IReportService, ReportService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IVisitRepository, VisitRepository>();
 
             // TRANSIENT: new instance every time. Order matters: package strategy is tried first.
             builder.Services.AddTransient<IPaymentStrategy, PackagePaymentStrategy>();

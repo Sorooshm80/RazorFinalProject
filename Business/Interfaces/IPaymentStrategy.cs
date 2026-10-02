@@ -8,7 +8,8 @@ namespace Business.Interfaces
 {
     public interface IPaymentStrategy
     {
-        bool CanPay(Customer customer);
-        PaymentResult Pay(Customer customer, PoolSession session);
+        bool CanPay(Customer customer, PoolSession session, DateTime date);
+        PaymentResult Pay(Customer customer, PoolSession session, DateTime date);
     }
+    
 }

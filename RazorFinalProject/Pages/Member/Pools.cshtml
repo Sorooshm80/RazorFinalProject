@@ -1,28 +1,64 @@
 ﻿@page
 @model Web.Pages.Member.PoolsModel
+@{
+    var isToday = Model.Date.Date == DateTime.Today;
+    var isPast = Model.Date.Date < DateTime.Today;
+}
 <h2>Pools</h2>
 <p class="text-info">@Model.Message</p>
 
 <form method="get" class="mb-3">
-    <select asp-for="PoolId" asp-items='new SelectList(Model.AllPools, "Id", "Name")'></select>
+    <label asp-for="PoolId" class="form-label">Pool</label>
+    <select asp-for="PoolId" asp-items="Model.PoolOptions"></select>
+    <label asp-for="Date" class="form-label ms-3">Date</label>
     <input asp-for="Date" type="date" />
-    <button class="btn btn-secondary">Show sessions</button>
+    <button class="btn btn-secondary ms-2">Show sessions</button>
 </form>
 
 <table class="table">
-    <tr><th>Session</th><th>Price</th><th></th></tr>
-    @foreach (var s in Model.Sessions)
+    <tr><th>Session</th><th>Price</th><th>Status</th><th></th></tr>
+    @foreach (var row in Model.Rows)
     {
         <tr>
-            <td>@s.Description</td>
-            <td>@s.Price</td>
+            <td>@row.Session.Description</td>
+            <td>@row.Session.Price</td>
             <td>
-                <form method="post">
-                    <input type="hidden" name="PoolId" value="@Model.PoolId" />
-                    <input type="hidden" name="Date" value="@Model.Date.ToString("yyyy-MM-dd")" />
-                    <button class="btn btn-outline-primary" asp-page-handler="Reserve" asp-route-sessionId="@s.Id">Reserve</button>
-                    <button class="btn btn-success" asp-page-handler="Enter" asp-route-sessionId="@s.Id">Enter today</button>
-                </form>
+                @if (row.State == SessionState.Entered)
+                {
+                    <span class="badge bg-success">Entered</span>
+                }
+                else if (row.State == SessionState.Reserved)
+                {
+
+                    <span class="badge bg-info">Reserved</span>
+                }
+                else
+                {
+
+                    <span class="badge bg-secondary">Available</span>
+                }
+            </td>
+            <td>
+                @if (row.State != SessionState.Entered && !isPast)
+                {
+                    <form method="post">
+                        <input type="hidden" name="PoolId" value="@Model.PoolId" />
+                        <input type="hidden" name="Date" value="@Model.Date.ToString("yyyy-MM-dd")" />
+
+                        @if (row.State == SessionState.Available)
+                        {
+                            <button class="btn btn-outline-primary" asp-page-handler="Reserve" asp-route-sessionId="@row.Session.Id">Reserve</button>
+                        }
+                        @if (row.State == SessionState.Reserved)
+                        {
+                            <button class="btn btn-outline-danger" asp-page-handler="Cancel" asp-route-sessionId="@row.Session.Id">Cancel reservation</button>
+                        }
+                        @if (isToday)
+                        {
+                            <button class="btn btn-success" asp-page-handler="Enter" asp-route-sessionId="@row.Session.Id">Enter</button>
+                        }
+                    </form>
+                }
             </td>
         </tr>
     }

@@ -8,7 +8,7 @@ namespace Business.Interfaces
 {
     public interface ISessionPackageRepository : IRepository<SessionPackage>
     {
-        SessionPackage GetActivePackage(int customerId, DateTime today);
+        SessionPackage GetActivePackage(int customerId, DateTime date, SessionType type);
         List<SessionPackage> GetByCustomer(int customerId);
     }
 }
