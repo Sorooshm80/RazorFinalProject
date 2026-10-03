@@ -15,17 +15,14 @@ namespace Web
             builder.Services.AddRazorPages();
             builder.Services.AddSession();
 
-            // SINGLETON: one instance for the whole app (no state, no scoped dependencies)
             builder.Services.AddSingleton<IPasswordHasher, Sha256PasswordHasher>();
             builder.Services.AddSingleton<ICommandInvoker, CommandInvoker>();
-            builder.Services.AddSingleton<IAdminSettings>(
-                new AdminSettings { Password = builder.Configuration["AdminPassword"] });
+            builder.Services.AddSingleton<IAdminSettings>(new AdminSettings { Password = builder.Configuration["AdminPassword"] });
 
-            // SCOPED: one instance per web request (DbContext, repositories, services)
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
-            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));  // generic
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>)); 
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IPoolSessionRepository, PoolSessionRepository>();
             builder.Services.AddScoped<ISessionPackageRepository, SessionPackageRepository>();
@@ -41,14 +38,15 @@ namespace Web
             builder.Services.AddScoped<IReportService, ReportService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IVisitRepository, VisitRepository>();
+            builder.Services.AddScoped<IReservationPolicy, VipReservationPolicy>();
 
-            // TRANSIENT: new instance every time. Order matters: package strategy is tried first.
+            
             builder.Services.AddTransient<IPaymentStrategy, PackagePaymentStrategy>();
             builder.Services.AddTransient<IPaymentStrategy, PayPerEntryStrategy>();
 
             var app = builder.Build();
 
-            // Create the database from the migration and add the sample pools
+            
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();

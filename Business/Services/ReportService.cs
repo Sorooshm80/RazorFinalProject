@@ -16,28 +16,24 @@ namespace Business.Services
             _reports = reports;
         }
 
-        // Report 1
         public List<VisitReportItem> CustomerVisits(int customerId, int days)
         {
             return _reports.GetCustomerVisits(customerId, DateTime.Today.AddDays(-days));
         }
 
-        // Report 2
         public List<PoolCountItem> TopPools(int days, int top)
         {
             var from = DateTime.Today.AddDays(-days);
             var to = DateTime.Today.AddDays(1);
-            return _reports.GetPoolVisitCounts(from, to).Take(top).ToList();
+            return _reports.GetPoolVisitCounts(from, to, top);
         }
 
-        // Report 3
         public PoolCountItem BusiestPoolOnDate(DateTime date)
         {
-            var counts = _reports.GetPoolVisitCounts(date.Date, date.Date.AddDays(1));
-            return counts.FirstOrDefault();   // list is sorted, highest first
+            var counts = _reports.GetPoolVisitCounts(date.Date, date.Date.AddDays(1), 1);
+            return counts.FirstOrDefault();
         }
 
-        // Report 4 (today is excluded because today's sessions may not be over yet)
         public List<MissedBookingItem> MissedBookings(int days)
         {
             return _reports.GetMissedBookings(DateTime.Today.AddDays(-days), DateTime.Today);

@@ -45,9 +45,13 @@
                         <input type="hidden" name="PoolId" value="@Model.PoolId" />
                         <input type="hidden" name="Date" value="@Model.Date.ToString("yyyy-MM-dd")" />
 
-                        @if (row.State == SessionState.Available)
+                        @if (row.State == SessionState.Available && row.CanReserve)
                         {
                             <button class="btn btn-outline-primary" asp-page-handler="Reserve" asp-route-sessionId="@row.Session.Id">Reserve</button>
+                        }
+                        @if (row.State == SessionState.Available && !row.CanReserve)
+                        {
+                            <span class="text-muted me-2">Covered by your package</span>
                         }
                         @if (row.State == SessionState.Reserved)
                         {

@@ -14,6 +14,22 @@ namespace Business
         public static OperationResult Fail(string message) => new OperationResult { Success = false, Message = message };
     }
 
+    public class SessionRow
+    {
+        public PoolSession Session { get; set; }
+        public SessionState State { get; set; }
+        public bool CanReserve { get; set; }
+    }
+
+    public class SessionRowData
+    {
+        public PoolSession Session { get; set; }
+        public bool HasVisit { get; set; }
+        public bool HasReservation { get; set; }
+        public bool HasPackageCredit { get; set; }
+        public bool CustomerIsVip { get; set; }
+    }
+
     public class PaymentResult
     {
         public PaymentMethod Method { get; set; }
@@ -45,10 +61,16 @@ namespace Business
     }
 
     public class MissedBookingItem
-    {
-        public string CustomerName { get; set; }
-        public string PoolName { get; set; }
-        public DateTime Date { get; set; }
-        public string SessionText { get; set; }
-    }
+{
+    public string CustomerName { get; set; }
+    public string PoolName { get; set; }
+    public DateTime Date { get; set; }
+
+    public DayOfWeek Day { get; set; }
+    public TimeSpan StartTime { get; set; }
+    public TimeSpan EndTime { get; set; }
+    public SessionType Type { get; set; }
+
+    public string SessionText => $"{Day} {StartTime:hh\\:mm}-{EndTime:hh\\:mm} ({Type})";
+}
 }

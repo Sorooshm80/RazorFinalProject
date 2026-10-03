@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Business.Services
 {
-    // One place to catch errors for every command
     public class CommandInvoker : ICommandInvoker
     {
         public OperationResult Run(ICommand command)
@@ -73,10 +72,11 @@ namespace Business.Services
         private readonly IBookingRepository _bookings;
         private readonly IVisitRepository _visits;
         private readonly IPaymentService _payments;
+        private readonly IReservationPolicy _policy;                    
 
         public ReserveSessionCommand(Customer customer, PoolSession session, DateTime date,
                                      IBookingRepository bookings, IVisitRepository visits,
-                                     IPaymentService payments)
+                                     IPaymentService payments, IReservationPolicy policy)   
         {
             _customer = customer;
             _session = session;
@@ -84,6 +84,7 @@ namespace Business.Services
             _bookings = bookings;
             _visits = visits;
             _payments = payments;
+            _policy = policy;
         }
 
         public OperationResult Execute()
@@ -92,6 +93,12 @@ namespace Business.Services
                 return OperationResult.Fail("You cannot reserve a session in the past.");
             if (_date.DayOfWeek != _session.Day)
                 return OperationResult.Fail("This session does not run on the chosen date.");
+
+          
+            if (!_policy.CanReserve(_customer, _session, _date))
+                return OperationResult.Fail("As a VIP you don't need to reserve. Just enter and your package is used. " +
+                                            "Reservation is available again when this session type in your package is used up.");
+
             if (_visits.Exists(_customer.Id, _session.Id, _date))
                 return OperationResult.Fail("You already entered this session.");
 
@@ -146,7 +153,6 @@ namespace Business.Services
             booking.Status = BookingStatus.Cancelled;
             _bookings.Update(booking);
 
-            // If a package paid for it, give the session back to the package
             if (booking.PaymentMethod == PaymentMethod.Package && booking.SessionPackageId != null)
             {
                 var package = _packages.GetById(booking.SessionPackageId.Value);
@@ -192,14 +198,13 @@ namespace Business.Services
                 return OperationResult.Fail("You already entered this session today.");
 
             var booking = _bookings.Find(_customer.Id, _session.Id, today);
+            bool hasReservation = booking != null && booking.Status == BookingStatus.Reserved;
+
             PaymentMethod method;
             decimal amount;
 
-            if (booking != null && booking.Status == BookingStatus.Reserved)
+            if (hasReservation)
             {
-                // Already paid when reserving
-                booking.Status = BookingStatus.Attended;
-                _bookings.Update(booking);
                 method = booking.PaymentMethod;
                 amount = 0;
             }
@@ -218,7 +223,17 @@ namespace Business.Services
                 PaymentMethod = method,
                 AmountPaid = amount
             };
-            _visits.Add(visit);
+
+            if (hasReservation)
+            {
+                booking.Visit = visit;
+                booking.Status = BookingStatus.Attended;
+                _bookings.Update(booking);
+            }
+            else
+            {
+                _visits.Add(visit);
+            }
 
             return OperationResult.Ok("Welcome to the pool!");
         }

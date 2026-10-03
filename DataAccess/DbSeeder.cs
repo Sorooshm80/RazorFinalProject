@@ -20,16 +20,15 @@ namespace DataAccess
 
             foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
             {
-                // Pool 1: fixed 2h sessions every day
+
                 db.Sessions.Add(MakeSession(fixedPool, day, 8, 10, SessionType.Fixed, 10));
                 db.Sessions.Add(MakeSession(fixedPool, day, 10, 12, SessionType.Fixed, 10));
                 db.Sessions.Add(MakeSession(fixedPool, day, 14, 16, SessionType.Fixed, 10));
                 db.Sessions.Add(MakeSession(fixedPool, day, 16, 18, SessionType.Fixed, 10));
 
-                // Pool 2: free time until closing every day
-                db.Sessions.Add(MakeSession(freePool, day, 9, 21, SessionType.FreeTime, 8));
 
-                // Pool 3: Sunday = 2 fixed sessions + free time, other days = free time
+                db.Sessions.Add(MakeSession(freePool, day, 9, 21, SessionType.FreeTime, 8));
+                
                 if (day == DayOfWeek.Sunday)
                 {
                     db.Sessions.Add(MakeSession(mixedPool, day, 8, 10, SessionType.Fixed, 10));

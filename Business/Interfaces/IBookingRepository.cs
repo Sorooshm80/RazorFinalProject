@@ -8,7 +8,7 @@ namespace Business.Interfaces
 {
     public interface IBookingRepository : IRepository<Booking>
     {
-        Booking Find(int customerId, int sessionId, DateTime date);   // latest booking
+        Booking Find(int customerId, int sessionId, DateTime date);
         List<Booking> GetByCustomer(int customerId);
         List<Booking> GetByCustomerAndDate(int customerId, DateTime date);
     }

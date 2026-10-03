@@ -9,7 +9,7 @@ namespace Business.Interfaces
     public interface IReportRepository
     {
         List<VisitReportItem> GetCustomerVisits(int customerId, DateTime from);
-        List<PoolCountItem> GetPoolVisitCounts(DateTime from, DateTime toExclusive);
+        List<PoolCountItem> GetPoolVisitCounts(DateTime from, DateTime toExclusive, int top);
         List<MissedBookingItem> GetMissedBookings(DateTime from, DateTime toExclusive);
     }
 }

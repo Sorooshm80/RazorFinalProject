@@ -22,7 +22,7 @@ namespace DataAccess.Repos
             else
                 query = query.Where(p => p.FreeTimeUsed < p.FreeTimeTotal);
 
-            return query.OrderBy(p => p.ExpiryDate).FirstOrDefault();   // package expiring first is used first
+            return query.OrderBy(p => p.ExpiryDate).FirstOrDefault(); 
         }
 
         public List<SessionPackage> GetByCustomer(int customerId)

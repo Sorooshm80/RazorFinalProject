@@ -16,11 +16,12 @@ namespace Business.Services
         private readonly ISessionPackageRepository _packages;
         private readonly IPaymentService _payments;
         private readonly ICommandInvoker _invoker;
+        private readonly IReservationPolicy _policy;
 
         public ReservationService(ICustomerRepository customers, IPoolSessionRepository sessions,
-                                  IBookingRepository bookings, IVisitRepository visits,
-                                  ISessionPackageRepository packages, IPaymentService payments,
-                                  ICommandInvoker invoker)
+                          IBookingRepository bookings, IVisitRepository visits,
+                          ISessionPackageRepository packages, IPaymentService payments,
+                          ICommandInvoker invoker, IReservationPolicy policy)   
         {
             _customers = customers;
             _sessions = sessions;
@@ -29,6 +30,7 @@ namespace Business.Services
             _packages = packages;
             _payments = payments;
             _invoker = invoker;
+            _policy = policy;  
         }
 
         public OperationResult Reserve(int customerId, int sessionId, DateTime date)
@@ -38,7 +40,7 @@ namespace Business.Services
             if (customer == null || session == null)
                 return OperationResult.Fail("Customer or session not found.");
 
-            var command = new ReserveSessionCommand(customer, session, date.Date, _bookings, _visits, _payments);
+            var command = new ReserveSessionCommand(customer, session, date.Date, _bookings, _visits, _payments, _policy);
             return _invoker.Run(command);
         }
 

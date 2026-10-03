@@ -7,7 +7,6 @@ using Business.Interfaces;
 
 namespace Business.Services
 {
-    // Uses one session from the customer's valid package
     public class PackagePaymentStrategy : IPaymentStrategy
     {
         private readonly ISessionPackageRepository _packages;

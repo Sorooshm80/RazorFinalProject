@@ -22,6 +22,11 @@ namespace DataAccess
             modelBuilder.Entity<SessionPackage>().Property(x => x.Price).HasPrecision(18, 2);
             modelBuilder.Entity<Booking>().Property(x => x.AmountPaid).HasPrecision(18, 2);
             modelBuilder.Entity<Visit>().Property(x => x.AmountPaid).HasPrecision(18, 2);
+            modelBuilder.Entity<Booking>()
+            .HasOne(b => b.Visit)
+            .WithOne()
+            .HasForeignKey<Booking>(b => b.VisitId)
+            .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -10,11 +10,7 @@
         public int Id { get; set; }
     }
 
-    public class SessionRow
-    {
-        public PoolSession Session { get; set; }
-        public SessionState State { get; set; }
-    }
+    
     public class Pool : BaseEntity
     {
         public string Name { get; set; }
@@ -75,7 +71,9 @@
         public BookingStatus Status { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public decimal AmountPaid { get; set; }
-        public int? SessionPackageId { get; set; }    
+        public int? SessionPackageId { get; set; }
+        public int? VisitId { get; set; }
+        public Visit Visit { get; set; }
     }
 
     public class Visit : BaseEntity
