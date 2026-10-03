@@ -31,7 +31,6 @@ namespace Business
         public decimal Price { get; set; }
     }
 
-    // Report rows
     public class VisitReportItem
     {
         public DateTime VisitDate { get; set; }

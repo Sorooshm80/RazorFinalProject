@@ -39,7 +39,6 @@ namespace DataAccess.Repos
             return result;
         }
 
-        // Used by report 2 and report 3. Sorted: busiest pool first.
         public List<PoolCountItem> GetPoolVisitCounts(DateTime from, DateTime toExclusive)
         {
             var visits = _context.Visits
